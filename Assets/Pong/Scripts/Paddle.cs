@@ -6,11 +6,15 @@ namespace Pong
     public class Paddle : MonoBehaviour
     {
         [SerializeField] private bool _isPlayer1;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private float _speed;
-        private InputAction _move;
         private Vector2 _moveDirection;
         private PongInputActions _pongInputActions;
+        private InputAction _move;
+        
+        public Color PaddleColor => _spriteRenderer.color;
+        public bool IsPlayer1 => _isPlayer1;
 
         private void Awake()
         {
