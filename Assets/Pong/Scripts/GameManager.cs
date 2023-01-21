@@ -9,6 +9,9 @@ namespace Pong
     {
         [Header("Game Settings")] 
         [SerializeField] private float _gameTime;
+        [SerializeField] private CameraShake _cameraShake;
+        [SerializeField] private float _hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall;
+        [SerializeField] private float _hitAmplitudeGainScore, _hitFrequencyGainScore, _shakeTimeScore;
         [Header("Ball")]
         [SerializeField] private Ball _ball;
         [SerializeField] private float _ballLaunchDelay;
@@ -121,6 +124,7 @@ namespace Pong
             {
                 if (x.collider.CompareTag("Ball"))
                 {
+                    _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
                     if (_currentScorer)
                         _currentScorer.HasCollision = true;
                     if (_ball.LastPlayerToHit)
@@ -141,6 +145,7 @@ namespace Pong
             {
                 if (x.collider.CompareTag("Ball"))
                 {
+                    _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
                     _currentScorer = null; 
                     _ball.ResetLastPlayer(_ballDefaultColor);
                     _paddleP1.HasCollision = true;
@@ -160,6 +165,7 @@ namespace Pong
                     _paddleP2.HasCollision = true;
                     if (_currentScorer != null)
                     {
+                        _cameraShake.Shake(_hitAmplitudeGainScore, _hitFrequencyGainScore, _shakeTimeScore);
                         if (_currentScorer == _paddleP1)
                         {
                             _scorePlayer1 += 1;

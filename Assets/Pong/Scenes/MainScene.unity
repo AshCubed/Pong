@@ -822,6 +822,7 @@ GameObject:
   m_Component:
   - component: {fileID: 456610407}
   - component: {fileID: 456610406}
+  - component: {fileID: 456610408}
   m_Layer: 0
   m_Name: Controller.GameManager
   m_TagString: Untagged
@@ -842,6 +843,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameTime: 120
+  _cameraShake: {fileID: 456610408}
+  _hitAmplitudeGainWall: 0.5
+  _hitFrequencyGainWall: 0.5
+  _shakeTimeWall: 0.5
+  _hitAmplitudeGainScore: 1
+  _hitFrequencyGainScore: 1
+  _shakeTimeScore: 1
   _ball: {fileID: 1724967748}
   _ballLaunchDelay: 2
   _ballDefaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -901,6 +909,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &456610408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456610405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d45b72c5d875b46ae2dac5afeb8676, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _vCam: {fileID: 596332690}
 --- !u!1 &496211430
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,8 +1129,8 @@ Canvas:
   m_GameObject: {fileID: 681525607}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1483948915}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -1681,7 +1702,7 @@ GameObject:
   - component: {fileID: 1133419763}
   - component: {fileID: 1133419764}
   m_Layer: 0
-  m_Name: Controller.PlayerManager
+  m_Name: Controller.PlayerInputManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2963,6 +2984,7 @@ GameObject:
   - component: {fileID: 1860108858}
   - component: {fileID: 1860108860}
   - component: {fileID: 1860108859}
+  - component: {fileID: 1860108861}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -3040,6 +3062,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1860108861
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860108857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 0
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1907658910
 GameObject:
   m_ObjectHideFlags: 0
