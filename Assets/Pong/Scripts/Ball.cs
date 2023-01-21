@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,6 +10,17 @@ namespace Pong
         [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private float _speed;
         [SerializeField] private Rigidbody2D _rb;
+        [SerializeField] private ParticleSystem _hitParticleSystem;
+        [SerializeField] private LayerMask _layerWall;
+        [SerializeField] private WallAngleHit[] _wallAngleHits;
+
+        [Serializable]
+        private struct WallAngleHit
+        {
+            public GameObject Wall;
+            public float AngleZ;
+            public bool ShouldCopyColor;
+        }
         
         public Color BallColor
         {
@@ -58,6 +70,25 @@ namespace Pong
             if (col.collider.CompareTag("Player"))
             {
                 LastPlayerToHit = col.gameObject.GetComponent<Paddle>();
+            }
+
+            if ((_layerWall.value & (1 << col.gameObject.layer)) > 0) 
+            {
+                foreach (var item in _wallAngleHits)
+                {
+                    if (col.gameObject == item.Wall)
+                    {
+                        var contactPoint = col.GetContact(0).point;
+                        var spawnPoint = new Vector3(contactPoint.x, contactPoint.y, 0f);
+                        var particle = Instantiate(_hitParticleSystem, spawnPoint, new Quaternion(0, 0, item.AngleZ, 0));
+                        if (LastPlayerToHit && item.ShouldCopyColor)
+                        {
+                            var main = particle.main;
+                            main.startColor = LastPlayerToHit.PaddleColor;
+                        }
+                        break;
+                    }
+                }
             }
         }
     }
