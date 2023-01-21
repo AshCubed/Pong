@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,13 +42,13 @@ namespace Pong
         private void OnCollisionStay2D(Collision2D col)
         {
             OnCollisionEvent?.Invoke(col, OnContactType.STAY);
-            OnCollisionEnterEvent?.Invoke(col);
+            OnCollisionStayEvent?.Invoke(col);
         }
 
         private void OnCollisionExit2D(Collision2D col)
         {
             OnCollisionEvent?.Invoke(col, OnContactType.EXIT);
-            OnCollisionEnterEvent?.Invoke(col);
+            OnCollisionExitEvent?.Invoke(col);
         }
     }
 }

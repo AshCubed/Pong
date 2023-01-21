@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 
 namespace Pong
 {
@@ -12,8 +13,8 @@ namespace Pong
         [SerializeField] private Color _ballDefaultColor;
         [SerializeField] private Transform _ballRestartPoint;
         [Header("Players")] 
-        [SerializeField] private Paddle _paddleP1;
-        [SerializeField] private Paddle _paddleP2;
+        [SerializeField] private Color _colorPaddle1;
+        [SerializeField] private Color _colorPaddle2;
         [Header("Ui")]
         [SerializeField] private TMP_Text _txtTime;
         [SerializeField] private TMP_Text _txtPlayer1Score;
@@ -24,6 +25,8 @@ namespace Pong
         [SerializeField] private OnCollision _onCollisionRightWall;
         [SerializeField] private OnCollision _onCollisionLeftWall;
 
+        private Paddle _paddleP1;
+        private Paddle _paddleP2;
         private float _currentGameTime;
         private int _scorePlayer1;
         private int _scorePlayer2;
@@ -31,22 +34,20 @@ namespace Pong
         private bool _isGameRunning;
         private bool _isTimerRunning;
         
-        
         // Start is called before the first frame update
         private void Start()
         {
             _currentGameTime = _gameTime;
             _scorePlayer1 = 0;
             _scorePlayer2 = 0;
-            _ball.BallColor = Color.white;
+            _ball.BallColor = _ballDefaultColor;
 
             _onCollisionMainWall.OnCollisionEvent.AddListener(BallHitMainWall);
             _onTriggerBackWall.OnTriggerEvent.AddListener(BallHitScoreTrigger);
             _onCollisionRightWall.OnCollisionEvent.AddListener(BallHitOtherWall);
             _onCollisionLeftWall.OnCollisionEvent.AddListener(BallHitOtherWall);
-
-            _isGameRunning = true;
-            _isTimerRunning = true;
+            
+            ResetBall();
         }
 
         // Update is called once per frame
@@ -55,6 +56,27 @@ namespace Pong
             if (_isGameRunning)
             {
                 Timer();
+            }
+        }
+        
+        public void PlayerInputManagerOnonPlayerJoined(PlayerInput obj)
+        {
+            if (!_paddleP1)
+            {
+                _paddleP1 = obj.gameObject.GetComponent<Paddle>();
+                _paddleP1.PaddleColor = _colorPaddle1;
+            }
+            else
+            {
+                _paddleP2 = obj.gameObject.GetComponent<Paddle>();
+                _paddleP2.PaddleColor = _colorPaddle2;
+            }
+
+            if (_paddleP1 && _paddleP2)
+            {
+                _isGameRunning = true;
+                _isTimerRunning = true;
+                LaunchBall();
             }
         }
 
@@ -86,14 +108,18 @@ namespace Pong
             {
                 if (x.collider.CompareTag("Ball"))
                 {
-                    if (_currentScorer != _ball.LastPlayerToHit)
+                    if (_currentScorer)
+                        _currentScorer.HasCollision = true;
+                    if (_ball.LastPlayerToHit)
                     {
                         _currentScorer = _ball.LastPlayerToHit;
-                        _ball.BallColor = _currentScorer.PaddleColor;
+                        var c = _currentScorer.PaddleColor;
+                        c.a = 1;
+                        _ball.BallColor = c;
+                        _currentScorer.HasCollision = false;
                     }
                 }
             }
-            
         }
 
         private void BallHitOtherWall(Collision2D x, OnContactType y)
@@ -103,7 +129,9 @@ namespace Pong
                 if (x.collider.CompareTag("Ball"))
                 {
                     _currentScorer = null; 
-                    _ball.BallColor = Color.white;
+                    _ball.ResetLastPlayer(_ballDefaultColor);
+                    _paddleP1.HasCollision = true;
+                    _paddleP2.HasCollision = true;
                 }
             }
         }
@@ -115,9 +143,11 @@ namespace Pong
                 if (x.CompareTag("Ball"))
                 {
                     ResetBall();
+                    _paddleP1.HasCollision = true;
+                    _paddleP2.HasCollision = true;
                     if (_currentScorer != null)
                     {
-                        if (_currentScorer.IsPlayer1)
+                        if (_currentScorer == _paddleP1)
                         {
                             _scorePlayer1 += 1;
                             _txtPlayer1Score.text = _scorePlayer1.ToString();
@@ -128,13 +158,18 @@ namespace Pong
                             _txtPlayer2Score.text = _scorePlayer2.ToString();
                         }
                     }
-                    LeanTween.delayedCall(2f, () =>
-                    {
-                        _ball.gameObject.transform.position = _ballRestartPoint.position;
-                        _ball.Launch();
-                    });
+                    LaunchBall();
                 }
             }
+        }
+
+        private void LaunchBall()
+        {
+            LeanTween.delayedCall(2f, () =>
+            {
+                _ball.gameObject.transform.position = _ballRestartPoint.position;
+                _ball.Launch();
+            });
         }
 
         private void ResetBall()

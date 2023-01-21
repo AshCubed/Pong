@@ -5,26 +5,36 @@ namespace Pong
 {
     public class Paddle : MonoBehaviour
     {
-        [SerializeField] private bool _isPlayer1;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Rigidbody2D _rb;
+        [SerializeField] private Collider2D _collider;
         [SerializeField] private float _speed;
         private Vector2 _moveDirection;
-        private PongInputActions _pongInputActions;
-        private InputAction _move;
-        
-        public Color PaddleColor => _spriteRenderer.color;
-        public bool IsPlayer1 => _isPlayer1;
 
-        private void Awake()
+
+        public Color PaddleColor
         {
-            _pongInputActions = new PongInputActions();
+            get => _spriteRenderer.color;
+            set => _spriteRenderer.color = value;
         }
-
-        // Update is called once per frame
-        private void Update()
+        public bool HasCollision
         {
-            _moveDirection = _move.ReadValue<Vector2>();
+            get => _collider.enabled;
+            set
+            {
+                _collider.enabled = value;
+                var c = _spriteRenderer.color;
+                if (value)
+                {
+                    c.a = 1f;
+                    _spriteRenderer.color = c;
+                }
+                else
+                {
+                    c.a = 0.5f;
+                    _spriteRenderer.color = c;
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -32,15 +42,6 @@ namespace Pong
             _rb.velocity = new Vector2(_moveDirection.x * _speed, 0f);
         }
 
-        private void OnEnable()
-        {
-            _move = _isPlayer1 ? _pongInputActions.Player1.Move : _pongInputActions.Player2.Move;
-            _move.Enable();
-        }
-        
-        private void OnDisable()
-        {
-            _move.Disable();
-        }
+        public void OnMove(InputAction.CallbackContext ctx) => _moveDirection = ctx.ReadValue<Vector2>();
     }
 }
