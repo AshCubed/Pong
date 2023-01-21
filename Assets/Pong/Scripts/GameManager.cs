@@ -20,10 +20,14 @@ namespace Pong
         [Header("Players")] 
         [SerializeField] private Color _colorPaddle1;
         [SerializeField] private Color _colorPaddle2;
-        [Header("Ui")]
+        [Header("Ui - Main")]
         [SerializeField] private TMP_Text _txtTime;
         [SerializeField] private TMP_Text _txtPlayer1Score;
         [SerializeField] private TMP_Text _txtPlayer2Score;
+        [Header("Ui - Player Join")]
+        [SerializeField] private GameObject _joinPlayer1;
+        [SerializeField] private GameObject _joinPlayer2;
+        [Header("Ui - Score Animation")]
         [SerializeField] private AnimationCurve _animationCurveScored;
         [SerializeField] private float _inTime;
         [SerializeField] private float _outTime;
@@ -80,12 +84,14 @@ namespace Pong
                 _paddleP1 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP1.PaddleColor = _colorPaddle1;
                 _imagePlayer1Scored.color = _colorPaddle1;
+                _joinPlayer1.SetActive(false);
             }
             else
             {
                 _paddleP2 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP2.PaddleColor = _colorPaddle2;
                 _imagePlayer2Scored.color = _colorPaddle2;
+                _joinPlayer2.SetActive(false);
             }
 
             if (_paddleP1 && _paddleP2)
@@ -93,6 +99,22 @@ namespace Pong
                 _isGameRunning = true;
                 _isTimerRunning = true;
                 LaunchBall();
+            }
+        }
+        
+        public void PlayerInputManagerOnonPlayerLeft(PlayerInput obj)
+        {
+            _isGameRunning = false;
+            _isTimerRunning = false;
+            ResetBall();
+            var paddle = obj.gameObject.GetComponent<Paddle>();
+            if (paddle == _paddleP1)
+            {
+                _joinPlayer1.SetActive(true);
+            }
+            else
+            {
+                _joinPlayer2.SetActive(true);
             }
         }
 
