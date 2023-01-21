@@ -9,6 +9,7 @@ namespace Pong
     {
         [Header("Game Settings")] 
         [SerializeField] private float _gameTime;
+        [SerializeField] private GameOverScreen _gameOverScreen;
         [SerializeField] private CameraShake _cameraShake;
         [SerializeField] private float _hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall;
         [SerializeField] private float _hitAmplitudeGainScore, _hitFrequencyGainScore, _shakeTimeScore;
@@ -53,18 +54,11 @@ namespace Pong
         // Start is called before the first frame update
         private void Start()
         {
-            _currentGameTime = _gameTime;
-            _scorePlayer1 = 0;
-            _scorePlayer2 = 0;
-            _ball.BallColor = _ballDefaultColor;
-            _groupPlayer1Scored.alpha = 0;
-            _groupPlayer2Scored.alpha = 0;
-
+            InitGame();
             _onCollisionMainWall.OnCollisionEvent.AddListener(BallHitMainWall);
             _onTriggerBackWall.OnTriggerEvent.AddListener(BallHitScoreTrigger);
             _onCollisionRightWall.OnCollisionEvent.AddListener(BallHitOtherWall);
             _onCollisionLeftWall.OnCollisionEvent.AddListener(BallHitOtherWall);
-            
             ResetBall();
         }
 
@@ -76,7 +70,81 @@ namespace Pong
                 Timer();
             }
         }
+
+        private void InitGame()
+        {
+            _currentGameTime = _gameTime;
+            _scorePlayer1 = 0;
+            _scorePlayer2 = 0;
+            _ball.BallColor = _ballDefaultColor;
+            _groupPlayer1Scored.alpha = 0;
+            _groupPlayer2Scored.alpha = 0;
+        }
         
+        private void Timer()
+        {
+            if (_currentGameTime > 0 && _isTimerRunning)
+            {
+                _currentGameTime -= Time.deltaTime;
+                _txtTime.text = DisplayTime(_currentGameTime);
+            }
+            else
+            {
+                _isTimerRunning = false;
+                _isGameRunning = false;
+                _txtTime.text = "00:00";
+                ResetBall();
+                _gameOverScreen.PlayAnimation(_paddleP1.PaddleColor, _paddleP2.PaddleColor, 
+                    _scorePlayer1, _scorePlayer2);
+                PlayerMovement(false);
+            }
+
+            string DisplayTime(float timeToDisplay)
+            {
+                float min = Mathf.FloorToInt(timeToDisplay / 60);
+                float sec = Mathf.FloorToInt(timeToDisplay % 60);
+                return $"{min:00}:{sec:00}";
+            }
+        }
+        
+        private void AnimationScore(CanvasGroup canvasGroup)
+        {
+            var groupGameObject = canvasGroup.gameObject;
+            groupGameObject.transform.localScale = new Vector3(.1f, .1f, .1f);
+            LeanTween.alphaCanvas(canvasGroup, 1f, _inTime);
+            var lean = LeanTween.scale(groupGameObject, new Vector3(0.9f, 0.9f, 0.9f), _inTime).setOnComplete(() =>
+            {
+                LeanTween.delayedCall(0.5f, () =>
+                {
+                    LeanTween.alphaCanvas(canvasGroup, 0f, _outTime);
+                    LeanTween.scale(groupGameObject, new Vector3(0.1f, 0.1f, 0.1f), _outTime);
+                });
+            });
+            lean.setEase(_animationCurveScored);
+        }
+
+        public void Retry()
+        {
+            var waitTime = _gameOverScreen.InitScreen();
+            LeanTween.delayedCall(waitTime, () =>
+            {
+                InitGame();
+                _isGameRunning = true;
+                _isTimerRunning = true;
+                PlayerMovement(true);
+                LaunchBall();
+            });
+        }
+
+        private void PlayerMovement(bool canMove)
+        {
+            _paddleP1.CanMove = canMove;
+            _paddleP2.CanMove = canMove;
+            _paddleP1.HasCollision = canMove;
+            _paddleP2.HasCollision = canMove;
+        }
+
+        #region Player Input Joined Events Calls
         public void PlayerInputManagerOnonPlayerJoined(PlayerInput obj)
         {
             if (!_paddleP1)
@@ -84,6 +152,7 @@ namespace Pong
                 _paddleP1 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP1.PaddleColor = _colorPaddle1;
                 _imagePlayer1Scored.color = _colorPaddle1;
+                _paddleP1.CanMove = true;
                 _joinPlayer1.SetActive(false);
             }
             else
@@ -91,11 +160,13 @@ namespace Pong
                 _paddleP2 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP2.PaddleColor = _colorPaddle2;
                 _imagePlayer2Scored.color = _colorPaddle2;
+                _paddleP2.CanMove = true;
                 _joinPlayer2.SetActive(false);
             }
 
             if (_paddleP1 && _paddleP2)
             {
+                PlayerMovement(true);
                 _isGameRunning = true;
                 _isTimerRunning = true;
                 LaunchBall();
@@ -117,29 +188,9 @@ namespace Pong
                 _joinPlayer2.SetActive(true);
             }
         }
+        #endregion
 
-        private void Timer()
-        {
-            if (_currentGameTime > 0 && _isTimerRunning)
-            {
-                _currentGameTime -= Time.deltaTime;
-                _txtTime.text = DisplayTime(_currentGameTime);
-            }
-            else
-            {
-                _isTimerRunning = false;
-                _txtTime.text = "00:00";
-                ResetBall();
-            }
-
-            string DisplayTime(float timeToDisplay)
-            {
-                float min = Mathf.FloorToInt(timeToDisplay / 60);
-                float sec = Mathf.FloorToInt(timeToDisplay % 60);
-                return $"{min:00}:{sec:00}";
-            }
-        }
-
+        #region Ball Code
         private void BallHitMainWall(Collision2D x, OnContactType y)
         {
             if (y == OnContactType.ENTER)
@@ -220,21 +271,6 @@ namespace Pong
             _ball.Stop();
             _ball.ResetLastPlayer(_ballDefaultColor);
         }
-
-        private void AnimationScore(CanvasGroup canvasGroup)
-        {
-            var groupGameObject = canvasGroup.gameObject;
-            groupGameObject.transform.localScale = new Vector3(.1f, .1f, .1f);
-            LeanTween.alphaCanvas(canvasGroup, 1f, _inTime);
-            var lean = LeanTween.scale(groupGameObject, new Vector3(0.9f, 0.9f, 0.9f), _inTime).setOnComplete(() =>
-            {
-                LeanTween.delayedCall(0.5f, () =>
-                {
-                    LeanTween.alphaCanvas(canvasGroup, 0f, _outTime);
-                    LeanTween.scale(groupGameObject, new Vector3(0.1f, 0.1f, 0.1f), _outTime);
-                });
-            });
-            lean.setEase(_animationCurveScored);
-        }
+        #endregion
     }
 }

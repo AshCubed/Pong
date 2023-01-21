@@ -10,7 +10,7 @@ namespace Pong
         [SerializeField] private Collider2D _collider;
         [SerializeField] private float _speed;
         private Vector2 _moveDirection;
-
+        private bool _canMove;
 
         public Color PaddleColor
         {
@@ -19,7 +19,6 @@ namespace Pong
         }
         public bool HasCollision
         {
-            get => _collider.enabled;
             set
             {
                 _collider.enabled = value;
@@ -36,10 +35,21 @@ namespace Pong
                 }
             }
         }
+        public bool CanMove
+        {
+            set
+            {
+                _canMove = value;
+                _rb.velocity = Vector2.zero;
+            }
+        }
 
         private void FixedUpdate()
         {
-            _rb.velocity = new Vector2(_moveDirection.x * _speed, 0f);
+            if (_canMove)
+            {
+                _rb.velocity = new Vector2(_moveDirection.x * _speed, 0f);
+            }
         }
 
         public void OnMove(InputAction.CallbackContext ctx) => _moveDirection = ctx.ReadValue<Vector2>();
