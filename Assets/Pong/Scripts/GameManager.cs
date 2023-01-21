@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace Pong
 {
@@ -10,6 +11,7 @@ namespace Pong
         [SerializeField] private float _gameTime;
         [Header("Ball")]
         [SerializeField] private Ball _ball;
+        [SerializeField] private float _ballLaunchDelay;
         [SerializeField] private Color _ballDefaultColor;
         [SerializeField] private Transform _ballRestartPoint;
         [Header("Players")] 
@@ -19,6 +21,13 @@ namespace Pong
         [SerializeField] private TMP_Text _txtTime;
         [SerializeField] private TMP_Text _txtPlayer1Score;
         [SerializeField] private TMP_Text _txtPlayer2Score;
+        [SerializeField] private AnimationCurve _animationCurveScored;
+        [SerializeField] private float _inTime;
+        [SerializeField] private float _outTime;
+        [SerializeField] private CanvasGroup _groupPlayer1Scored;
+        [SerializeField] private CanvasGroup _groupPlayer2Scored;
+        [SerializeField] private Image _imagePlayer1Scored;
+        [SerializeField] private Image _imagePlayer2Scored;
         [Header("On Triggers")]
         [SerializeField] private OnCollision _onCollisionMainWall;
         [SerializeField] private OnTrigger _onTriggerBackWall;
@@ -41,6 +50,8 @@ namespace Pong
             _scorePlayer1 = 0;
             _scorePlayer2 = 0;
             _ball.BallColor = _ballDefaultColor;
+            _groupPlayer1Scored.alpha = 0;
+            _groupPlayer2Scored.alpha = 0;
 
             _onCollisionMainWall.OnCollisionEvent.AddListener(BallHitMainWall);
             _onTriggerBackWall.OnTriggerEvent.AddListener(BallHitScoreTrigger);
@@ -65,11 +76,13 @@ namespace Pong
             {
                 _paddleP1 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP1.PaddleColor = _colorPaddle1;
+                _imagePlayer1Scored.color = _colorPaddle1;
             }
             else
             {
                 _paddleP2 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP2.PaddleColor = _colorPaddle2;
+                _imagePlayer2Scored.color = _colorPaddle2;
             }
 
             if (_paddleP1 && _paddleP2)
@@ -151,11 +164,13 @@ namespace Pong
                         {
                             _scorePlayer1 += 1;
                             _txtPlayer1Score.text = _scorePlayer1.ToString();
+                            AnimationScore(_groupPlayer1Scored);
                         }
                         else
                         {
                             _scorePlayer2 += 1;
                             _txtPlayer2Score.text = _scorePlayer2.ToString();
+                            AnimationScore(_groupPlayer2Scored);
                         }
                     }
                     LaunchBall();
@@ -165,7 +180,7 @@ namespace Pong
 
         private void LaunchBall()
         {
-            LeanTween.delayedCall(2f, () =>
+            LeanTween.delayedCall(_ballLaunchDelay, () =>
             {
                 _ball.gameObject.transform.position = _ballRestartPoint.position;
                 _ball.Launch();
@@ -176,6 +191,22 @@ namespace Pong
         {
             _ball.Stop();
             _ball.ResetLastPlayer(_ballDefaultColor);
+        }
+
+        private void AnimationScore(CanvasGroup canvasGroup)
+        {
+            var groupGameObject = canvasGroup.gameObject;
+            groupGameObject.transform.localScale = new Vector3(.1f, .1f, .1f);
+            LeanTween.alphaCanvas(canvasGroup, 1f, _inTime);
+            var lean = LeanTween.scale(groupGameObject, new Vector3(0.9f, 0.9f, 0.9f), _inTime).setOnComplete(() =>
+            {
+                LeanTween.delayedCall(0.5f, () =>
+                {
+                    LeanTween.alphaCanvas(canvasGroup, 0f, _outTime);
+                    LeanTween.scale(groupGameObject, new Vector3(0.1f, 0.1f, 0.1f), _outTime);
+                });
+            });
+            lean.setEase(_animationCurveScored);
         }
     }
 }
