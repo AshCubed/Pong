@@ -1706,6 +1706,8 @@ MonoBehaviour:
   _ballLaunchDelay: 3
   _ballDefaultColor: {r: 1, g: 1, b: 1, a: 1}
   _ballRestartPoint: {fileID: 18639777}
+  _player1StartPos: {fileID: 1363749024}
+  _player2StartPos: {fileID: 1122103049}
   _colorPaddle1: {r: 0, g: 0.67058825, b: 1, a: 1}
   _colorPaddle2: {r: 1, g: 0.40784314, b: 0, a: 1}
   _txtTime: {fileID: 1707951058}
@@ -3706,6 +3708,11 @@ RectTransform:
   m_AnchoredPosition: {x: 1053, y: 76}
   m_SizeDelta: {x: 666.7327, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!4 &1363749024 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7258040935421041183, guid: 2516434003342564797268b8d19cb09e, type: 3}
+  m_PrefabInstance: {fileID: 7258040935703888563}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1421022433
 GameObject:
   m_ObjectHideFlags: 0

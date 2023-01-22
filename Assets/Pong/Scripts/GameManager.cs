@@ -21,6 +21,8 @@ namespace Pong
         [SerializeField] private Color _ballDefaultColor;
         [SerializeField] private Transform _ballRestartPoint;
         [Header("Players")] 
+        [SerializeField] private Transform _player1StartPos;
+        [SerializeField] private Transform _player2StartPos;
         [SerializeField] private Color _colorPaddle1;
         [SerializeField] private Color _colorPaddle2;
         [Header("Ui - Main")]
@@ -169,6 +171,7 @@ namespace Pong
             {
                 AudioManager.Instance.PlayOneShot("PlayerJoined");
                 _paddleP1 = obj.gameObject.GetComponent<Paddle>();
+                _paddleP1.gameObject.transform.position = _player1StartPos.position;
                 _paddleP1.PaddleColor = _colorPaddle1;
                 _imagePlayer1Scored.color = _colorPaddle1;
                 _paddleP1.CanMove = true;
@@ -178,6 +181,7 @@ namespace Pong
             {
                 AudioManager.Instance.PlayOneShot("PlayerJoined");
                 _paddleP2 = obj.gameObject.GetComponent<Paddle>();
+                _paddleP2.gameObject.transform.position = _player2StartPos.position;
                 _paddleP2.PaddleColor = _colorPaddle2;
                 _imagePlayer2Scored.color = _colorPaddle2;
                 _paddleP2.CanMove = true;
