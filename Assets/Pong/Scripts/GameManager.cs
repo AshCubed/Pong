@@ -195,7 +195,7 @@ namespace Pong
         {
             if (y == OnContactType.ENTER)
             {
-                if (x.collider.CompareTag("Ball"))
+                if (x.collider.CompareTag(Constants.Tags.BALL))
                 {
                     _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
                     if (_currentScorer)
@@ -216,7 +216,7 @@ namespace Pong
         {
             if (y == OnContactType.ENTER)
             {
-                if (x.collider.CompareTag("Ball"))
+                if (x.collider.CompareTag(Constants.Tags.BALL))
                 {
                     _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
                     _currentScorer = null; 
@@ -231,7 +231,7 @@ namespace Pong
         {
             if (y == OnContactType.ENTER)
             {
-                if (x.CompareTag("Ball"))
+                if (x.CompareTag(Constants.Tags.BALL))
                 {
                     ResetBall();
                     _paddleP1.HasCollision = true;

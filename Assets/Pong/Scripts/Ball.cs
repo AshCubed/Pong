@@ -67,7 +67,7 @@ namespace Pong
 
         private void OnCollisionEnter2D(Collision2D col)
         {
-            if (col.collider.CompareTag("Player"))
+            if (col.collider.CompareTag(Constants.Tags.PLAYER))
             {
                 LastPlayerToHit = col.gameObject.GetComponent<Paddle>();
             }
