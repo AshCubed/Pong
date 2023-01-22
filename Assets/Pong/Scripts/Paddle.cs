@@ -21,7 +21,7 @@ namespace Pong
         {
             set
             {
-                _collider.enabled = value;
+                //_collider.enabled = value;
                 var c = _spriteRenderer.color;
                 if (value)
                 {
