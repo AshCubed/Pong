@@ -1,3 +1,4 @@
+using System;
 using Pong.Audio;
 using UnityEngine;
 using TMPro;
@@ -26,6 +27,7 @@ namespace Pong
         [SerializeField] private TMP_Text _txtTime;
         [SerializeField] private TMP_Text _txtPlayer1Score;
         [SerializeField] private TMP_Text _txtPlayer2Score;
+        [SerializeField] private TMP_Text _txtBallLaunchCountdown;
         [Header("Ui - Player Join")]
         [SerializeField] private GameObject _joinPlayer1;
         [SerializeField] private GameObject _joinPlayer2;
@@ -83,6 +85,7 @@ namespace Pong
             _ball.BallColor = _ballDefaultColor;
             _groupPlayer1Scored.alpha = 0;
             _groupPlayer2Scored.alpha = 0;
+            _txtBallLaunchCountdown.gameObject.SetActive(false);
         }
         
         private void Timer()
@@ -142,10 +145,12 @@ namespace Pong
             var waitTime = _gameOverScreen.InitScreen();
             LeanTween.delayedCall(waitTime, () =>
             {
-                _isGameRunning = true;
-                _isTimerRunning = true;
-                PlayerMovement(true);
-                LaunchBall();
+                LaunchBall(() =>
+                {
+                    _isGameRunning = true;
+                    _isTimerRunning = true;
+                    PlayerMovement(true);
+                });
             });
         }
 
@@ -181,10 +186,12 @@ namespace Pong
 
             if (_paddleP1 && _paddleP2)
             {
-                PlayerMovement(true);
-                _isGameRunning = true;
-                _isTimerRunning = true;
-                LaunchBall();
+                LaunchBall(() =>
+                {
+                    PlayerMovement(true);
+                    _isGameRunning = true;
+                    _isTimerRunning = true;
+                });
             }
         }
         
@@ -270,18 +277,36 @@ namespace Pong
                             AnimationScore(_groupPlayer2Scored);
                         }
                     }
-                    LaunchBall();
+                    LaunchBall(null, true);
                 }
             }
         }
 
-        private void LaunchBall()
+        private void LaunchBall(Action afterBallLaunch = null, bool foregoCountdown = false)
         {
-            _leanBallReset = LeanTween.delayedCall(_ballLaunchDelay, () =>
+            if (foregoCountdown)
             {
-                _ball.gameObject.transform.position = _ballRestartPoint.position;
-                _ball.Launch();
-            });
+                _leanBallReset = LeanTween.delayedCall(_ballLaunchDelay, () =>
+                {
+                    _ball.gameObject.transform.position = _ballRestartPoint.position;
+                    afterBallLaunch?.Invoke();
+                    _ball.Launch();
+                });
+            }
+            else
+            {
+                _txtBallLaunchCountdown.gameObject.SetActive(true);
+                _leanBallReset = LeanTween.value(_ballLaunchDelay+1, 0, 3f).setOnComplete(() =>
+                {
+                    _ball.gameObject.transform.position = _ballRestartPoint.position;
+                    _txtBallLaunchCountdown.gameObject.SetActive(false);
+                    afterBallLaunch?.Invoke();
+                    _ball.Launch();
+                }).setOnUpdate(x =>
+                {
+                    _txtBallLaunchCountdown.text = Mathf.FloorToInt(x).ToString();
+                });
+            }
         }
 
         private void ResetBall()

@@ -72,8 +72,13 @@ namespace Pong
             {
                 _txtPlayerXWins.text = "It's a tie";
             }
-            _txtPlayer1.color = colorP1;
-            _txtPlayer2.color= colorP2;
+
+            var c1 = colorP1;
+            c1.a = 1;
+            var c2 = colorP2;
+            c2.a = 1;
+            _txtPlayer1.color = c1;
+            _txtPlayer2.color= c2;
             _txtPlayer1Score.text = scoreP1.ToString();
             _txtPlayer2Score.text = scoreP2.ToString();
         }
