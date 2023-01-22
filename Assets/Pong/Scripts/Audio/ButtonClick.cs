@@ -24,7 +24,7 @@ namespace Pong.Audio
 
         private void PlayButtonClick()
         {
-            _audioManager.PlaySounds("ButtonClick");
+            _audioManager.PlayOneShot("ButtonClick");
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -35,6 +35,11 @@ namespace Pong.Audio
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
     }
 }

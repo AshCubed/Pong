@@ -299,6 +299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 69620681}
   - component: {fileID: 69620680}
+  - component: {fileID: 69620682}
   m_Layer: 0
   m_Name: Controller.AudioManager
   m_TagString: Untagged
@@ -326,21 +327,21 @@ MonoBehaviour:
   - Name: BackgroundMusic
     Clip: {fileID: 8300000, guid: 5630b4ffe6251a64c9a137caa24e6a8e, type: 3}
     SoundType: 0
-    Volume: 0.5
+    Volume: 0.1
     Pitch: 1
     Loop: 1
     Source: {fileID: 0}
   - Name: GameOver
     Clip: {fileID: 8300000, guid: d101563eeeaa90846b536768af098657, type: 3}
     SoundType: 2
-    Volume: 0.5
+    Volume: 0.05
     Pitch: 1
     Loop: 0
     Source: {fileID: 0}
   - Name: BallHit
     Clip: {fileID: 8300000, guid: 36db5ec0896dc024191ae5958f18bf5c, type: 3}
     SoundType: 3
-    Volume: 0.3
+    Volume: 0.2
     Pitch: 1
     Loop: 0
     Source: {fileID: 0}
@@ -354,7 +355,21 @@ MonoBehaviour:
   - Name: ButtonClick
     Clip: {fileID: 8300000, guid: 25a70c1b68555fe4282ae8d98f75bc61, type: 3}
     SoundType: 1
-    Volume: 0.5
+    Volume: 0.2
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: PlayerJoined
+    Clip: {fileID: 8300000, guid: e23471fd047e94345a9011fe460f2c52, type: 3}
+    SoundType: 3
+    Volume: 0.2
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: BallLaunch
+    Clip: {fileID: 8300000, guid: c73397d11878da24da35c22d9dd1443e, type: 3}
+    SoundType: 3
+    Volume: 0.1
     Pitch: 1
     Loop: 0
     Source: {fileID: 0}
@@ -371,8 +386,21 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &69620682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69620679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f762847991ac3d04d8a5035accf9f7cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioManager: {fileID: 69620680}
 --- !u!1 &88670900
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,7 +546,7 @@ GameObject:
   m_Component:
   - component: {fileID: 109521236}
   m_Layer: 0
-  m_Name: -----Camera--------------------
+  m_Name: -----Camera-------------------------------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1665,7 +1693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e8bde489b03ac54488282c08e21f357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameTime: 10
+  _gameTime: 120
   _gameOverScreen: {fileID: 456610409}
   _cameraShake: {fileID: 456610408}
   _hitAmplitudeGainWall: 0.5
@@ -1733,7 +1761,7 @@ Transform:
   m_Children:
   - {fileID: 18639777}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &456610408
 MonoBehaviour:
@@ -1910,7 +1938,7 @@ GameObject:
   m_Component:
   - component: {fileID: 611596234}
   m_Layer: 0
-  m_Name: -----Environment--------------------
+  m_Name: -----Environment--------------------------------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3119,7 +3147,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1133419764
 MonoBehaviour:
@@ -4422,6 +4450,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1669565581}
   m_CullTransparentMesh: 1
+--- !u!1 &1678958559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1678958560}
+  m_Layer: 0
+  m_Name: -----Ui------------------------------------------------------
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1678958560
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678958559}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1707951056
 GameObject:
   m_ObjectHideFlags: 0
@@ -4799,7 +4858,7 @@ Transform:
   - {fileID: 289045270}
   - {fileID: 717849792}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1804342297
 BoxCollider2D:
@@ -5363,7 +5422,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1909810558}
   m_Layer: 0
-  m_Name: -----Controllers--------------------
+  m_Name: -----Controllers--------------------------------------
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5382,7 +5441,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2104881946
 GameObject:

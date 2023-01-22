@@ -1,4 +1,5 @@
 using System;
+using Pong.Audio;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -48,6 +49,7 @@ namespace Pong
                 gameObject.SetActive(true);
             var x = Random.Range(0, 2) == 0 ? -1 : 1;
             _rb.velocity = new Vector2(_speed * x, _speed * 1);
+            AudioManager.Instance.PlayOneShot("BallLaunch");
         }
 
         /// <summary>
@@ -69,6 +71,7 @@ namespace Pong
         {
             if (col.collider.CompareTag(Constants.Tags.PLAYER))
             {
+                AudioManager.Instance.PlayOneShot("BallHit");
                 LastPlayerToHit = col.gameObject.GetComponent<Paddle>();
             }
 

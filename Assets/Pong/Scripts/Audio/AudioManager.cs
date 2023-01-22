@@ -51,6 +51,11 @@ namespace Pong.Audio
             }
         }
 
+        private void Start()
+        {
+            PlaySounds("BackgroundMusic");
+        }
+
         public void PlaySounds(string audioName)
         {
             var s = Array.Find(_sounds, sound => sound.Name == audioName);
