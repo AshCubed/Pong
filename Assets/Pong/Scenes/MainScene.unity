@@ -322,7 +322,42 @@ MonoBehaviour:
   _audioMixersUi: {fileID: -1479695043925622634, guid: 24efc93438b40ac4ab766fedc44dc94c, type: 2}
   _audioMixersMusic: {fileID: -4437571957865692617, guid: 24efc93438b40ac4ab766fedc44dc94c, type: 2}
   _audioMixersSfx: {fileID: -392701916402937727, guid: 24efc93438b40ac4ab766fedc44dc94c, type: 2}
-  _sounds: []
+  _sounds:
+  - Name: BackgroundMusic
+    Clip: {fileID: 8300000, guid: 5630b4ffe6251a64c9a137caa24e6a8e, type: 3}
+    SoundType: 0
+    Volume: 0.5
+    Pitch: 1
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: GameOver
+    Clip: {fileID: 8300000, guid: d101563eeeaa90846b536768af098657, type: 3}
+    SoundType: 2
+    Volume: 0.5
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: BallHit
+    Clip: {fileID: 8300000, guid: 36db5ec0896dc024191ae5958f18bf5c, type: 3}
+    SoundType: 3
+    Volume: 0.3
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: ScorePoint
+    Clip: {fileID: 8300000, guid: 90ed4dbc7eaa24348bd05653f779f770, type: 3}
+    SoundType: 3
+    Volume: 0.5
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: ButtonClick
+    Clip: {fileID: 8300000, guid: 25a70c1b68555fe4282ae8d98f75bc61, type: 3}
+    SoundType: 1
+    Volume: 0.5
+    Pitch: 1
+    Loop: 0
+    Source: {fileID: 0}
 --- !u!4 &69620681
 Transform:
   m_ObjectHideFlags: 0
