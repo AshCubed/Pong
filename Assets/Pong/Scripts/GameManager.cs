@@ -61,6 +61,8 @@ namespace Pong
         private void Start()
         {
             InitGame();
+            _joinPlayer1.SetActive(true);
+            _joinPlayer2.SetActive(false);
             _onCollisionMainWall.OnCollisionEvent.AddListener(BallHitMainWall);
             _onTriggerBackWall.OnTriggerEvent.AddListener(BallHitScoreTrigger);
             _onCollisionRightWall.OnCollisionEvent.AddListener(BallHitOtherWall);
@@ -176,6 +178,7 @@ namespace Pong
                 _imagePlayer1Scored.color = _colorPaddle1;
                 _paddleP1.CanMove = true;
                 _joinPlayer1.SetActive(false);
+                _joinPlayer2.SetActive(true);
             }
             else
             {
