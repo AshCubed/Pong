@@ -1,9 +1,9 @@
 using System;
+using System.Linq;
 using Pong.Audio;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace Pong
 {
@@ -11,10 +11,7 @@ namespace Pong
     {
         [Header("Game Settings")] 
         [SerializeField] private float _gameTime;
-        [SerializeField] private GameOverScreen _gameOverScreen;
-        [SerializeField] private CameraShake _cameraShake;
-        [SerializeField] private float _hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall;
-        [SerializeField] private float _hitAmplitudeGainScore, _hitFrequencyGainScore, _shakeTimeScore;
+        [SerializeField] private float _waitTimeAfterRetryPress;
         [Header("Ball")]
         [SerializeField] private Ball _ball;
         [SerializeField] private float _ballLaunchDelay;
@@ -27,25 +24,20 @@ namespace Pong
         [SerializeField] private Color _colorPaddle2;
         [Header("Ui - Main")]
         [SerializeField] private TMP_Text _txtTime;
-        [SerializeField] private TMP_Text _txtPlayer1Score;
-        [SerializeField] private TMP_Text _txtPlayer2Score;
         [SerializeField] private TMP_Text _txtBallLaunchCountdown;
-        [Header("Ui - Player Join")]
-        [SerializeField] private GameObject _joinPlayer1;
-        [SerializeField] private GameObject _joinPlayer2;
-        [Header("Ui - Score Animation")]
-        [SerializeField] private AnimationCurve _animationCurveScored;
-        [SerializeField] private float _inTime;
-        [SerializeField] private float _outTime;
-        [SerializeField] private CanvasGroup _groupPlayer1Scored;
-        [SerializeField] private CanvasGroup _groupPlayer2Scored;
-        [SerializeField] private Image _imagePlayer1Scored;
-        [SerializeField] private Image _imagePlayer2Scored;
         [Header("On Triggers")]
         [SerializeField] private OnCollision _onCollisionMainWall;
         [SerializeField] private OnTrigger _onTriggerBackWall;
         [SerializeField] private OnCollision _onCollisionRightWall;
         [SerializeField] private OnCollision _onCollisionLeftWall;
+        
+        private Action _onGameInit;
+        private Action<Paddle, int, int> _onPlayerScoreChange;
+        private Action<BallHit> _onBallHit;
+        private Action<float> _onGameRetry;
+        private Action<Color, Color, int, int> _onGameEnd;
+        private Action<Paddle, Color> _onPlayerJoined;
+        private Action<Paddle> _onPlayerLeft;
 
         private Paddle _paddleP1;
         private Paddle _paddleP2;
@@ -60,9 +52,18 @@ namespace Pong
         // Start is called before the first frame update
         private void Start()
         {
+            foreach (var item in FindObjectsOfType<MonoBehaviour>(true).OfType<IGameManager>())
+            {
+                _onGameInit += item.OnInit;
+                _onPlayerScoreChange += item.OnPlayerScoreChange;
+                _onBallHit += item.OnBallHit;
+                _onGameRetry += item.OnGameRetry;
+                _onGameEnd += item.OnGameEnd;
+                _onPlayerJoined += item.OnPlayerJoined;
+                _onPlayerLeft += item.OnPlayerLeft;
+            }
+            
             InitGame();
-            _joinPlayer1.SetActive(true);
-            _joinPlayer2.SetActive(false);
             _onCollisionMainWall.OnCollisionEvent.AddListener(BallHitMainWall);
             _onTriggerBackWall.OnTriggerEvent.AddListener(BallHitScoreTrigger);
             _onCollisionRightWall.OnCollisionEvent.AddListener(BallHitOtherWall);
@@ -84,12 +85,10 @@ namespace Pong
             _currentGameTime = _gameTime;
             _scorePlayer1 = 0;
             _scorePlayer2 = 0;
-            _txtPlayer1Score.text = _scorePlayer1.ToString();
-            _txtPlayer2Score.text = _scorePlayer2.ToString();
             _ball.BallColor = _ballDefaultColor;
-            _groupPlayer1Scored.alpha = 0;
-            _groupPlayer2Scored.alpha = 0;
             _txtBallLaunchCountdown.gameObject.SetActive(false);
+            _onPlayerScoreChange?.Invoke(null, _scorePlayer1, _scorePlayer2);
+            _onGameInit?.Invoke();
         }
         
         private void Timer()
@@ -118,27 +117,11 @@ namespace Pong
             _isGameRunning = false;
             _txtTime.text = "00:00";
             ResetBall();
-            _gameOverScreen.PlayAnimation(_paddleP1.PaddleColor, _paddleP2.PaddleColor, 
-                _scorePlayer1, _scorePlayer2);
             PlayerMovement(false);
             AudioManager.Instance.PlaySounds("GameOver");
             AudioManager.Instance.FadeOutAudio("BackgroundMusic", null);
-        }
-        
-        private void AnimationScore(CanvasGroup canvasGroup)
-        {
-            var groupGameObject = canvasGroup.gameObject;
-            groupGameObject.transform.localScale = new Vector3(.1f, .1f, .1f);
-            LeanTween.alphaCanvas(canvasGroup, 1f, _inTime);
-            var lean = LeanTween.scale(groupGameObject, new Vector3(0.9f, 0.9f, 0.9f), _inTime).setOnComplete(() =>
-            {
-                LeanTween.delayedCall(0.5f, () =>
-                {
-                    LeanTween.alphaCanvas(canvasGroup, 0f, _outTime);
-                    LeanTween.scale(groupGameObject, new Vector3(0.1f, 0.1f, 0.1f), _outTime);
-                });
-            });
-            lean.setEase(_animationCurveScored);
+            _onGameEnd?.Invoke(_paddleP1.PaddleColor, _paddleP2.PaddleColor, 
+                _scorePlayer1, _scorePlayer2);
         }
 
         public void Retry()
@@ -146,8 +129,8 @@ namespace Pong
             AudioManager.Instance.PlaySounds("BackgroundMusic");
             AudioManager.Instance.StopSounds("GameOver");
             InitGame();
-            var waitTime = _gameOverScreen.InitScreen();
-            LeanTween.delayedCall(waitTime, () =>
+            _onGameRetry?.Invoke(_waitTimeAfterRetryPress);
+            LeanTween.delayedCall(_waitTimeAfterRetryPress, () =>
             {
                 LaunchBall(() =>
                 {
@@ -174,21 +157,16 @@ namespace Pong
                 AudioManager.Instance.PlayOneShot("PlayerJoined");
                 _paddleP1 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP1.gameObject.transform.position = _player1StartPos.position;
-                _paddleP1.PaddleColor = _colorPaddle1;
-                _imagePlayer1Scored.color = _colorPaddle1;
                 _paddleP1.CanMove = true;
-                _joinPlayer1.SetActive(false);
-                _joinPlayer2.SetActive(true);
+                _onPlayerJoined?.Invoke(_paddleP1, _colorPaddle1);
             }
             else
             {
                 AudioManager.Instance.PlayOneShot("PlayerJoined");
                 _paddleP2 = obj.gameObject.GetComponent<Paddle>();
                 _paddleP2.gameObject.transform.position = _player2StartPos.position;
-                _paddleP2.PaddleColor = _colorPaddle2;
-                _imagePlayer2Scored.color = _colorPaddle2;
                 _paddleP2.CanMove = true;
-                _joinPlayer2.SetActive(false);
+                _onPlayerJoined?.Invoke(_paddleP2, _colorPaddle2);
             }
 
             if (_paddleP1 && _paddleP2)
@@ -207,15 +185,7 @@ namespace Pong
             _isGameRunning = false;
             _isTimerRunning = false;
             ResetBall();
-            var paddle = obj.gameObject.GetComponent<Paddle>();
-            if (paddle == _paddleP1)
-            {
-                _joinPlayer1.SetActive(true);
-            }
-            else
-            {
-                _joinPlayer2.SetActive(true);
-            }
+            _onPlayerLeft?.Invoke(obj.gameObject.GetComponent<Paddle>() == _paddleP1 ? _paddleP1 : _paddleP2);
         }
         #endregion
 
@@ -227,7 +197,7 @@ namespace Pong
                 if (x.collider.CompareTag(Constants.Tags.BALL))
                 {
                     AudioManager.Instance.PlayOneShot("BallHit");
-                    _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
+                    _onBallHit?.Invoke(BallHit.WALL);
                     if (_currentScorer)
                         _currentScorer.HasCollision = true;
                     if (_ball.LastPlayerToHit)
@@ -249,7 +219,7 @@ namespace Pong
                 if (x.collider.CompareTag(Constants.Tags.BALL))
                 {
                     AudioManager.Instance.PlayOneShot("BallHit");
-                    _cameraShake.Shake(_hitAmplitudeGainWall, _hitFrequencyGainWall, _shakeTimeWall);
+                    _onBallHit?.Invoke(BallHit.WALL);
                     _currentScorer = null; 
                     _ball.ResetLastPlayer(_ballDefaultColor);
                     _paddleP1.HasCollision = true;
@@ -270,19 +240,16 @@ namespace Pong
                     if (_currentScorer != null)
                     {
                         AudioManager.Instance.PlaySounds("ScorePoint");
-                        _cameraShake.Shake(_hitAmplitudeGainScore, _hitFrequencyGainScore, _shakeTimeScore);
+                        _onBallHit?.Invoke(BallHit.SCORE_TRIGGER);
                         if (_currentScorer == _paddleP1)
                         {
                             _scorePlayer1 += 1;
-                            _txtPlayer1Score.text = _scorePlayer1.ToString();
-                            AnimationScore(_groupPlayer1Scored);
                         }
                         else
                         {
                             _scorePlayer2 += 1;
-                            _txtPlayer2Score.text = _scorePlayer2.ToString();
-                            AnimationScore(_groupPlayer2Scored);
                         }
+                        _onPlayerScoreChange?.Invoke(_currentScorer, _scorePlayer1, _scorePlayer2);
                     }
                     LaunchBall(null, true);
                 }

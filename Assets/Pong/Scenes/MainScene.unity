@@ -386,7 +386,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &69620682
 MonoBehaviour:
@@ -1673,7 +1673,6 @@ GameObject:
   - component: {fileID: 456610407}
   - component: {fileID: 456610406}
   - component: {fileID: 456610408}
-  - component: {fileID: 456610409}
   m_Layer: 0
   m_Name: Controller.GameManager
   m_TagString: Untagged
@@ -1693,15 +1692,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e8bde489b03ac54488282c08e21f357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameTime: 120
-  _gameOverScreen: {fileID: 456610409}
-  _cameraShake: {fileID: 456610408}
-  _hitAmplitudeGainWall: 0.5
-  _hitFrequencyGainWall: 0.5
-  _shakeTimeWall: 0.5
-  _hitAmplitudeGainScore: 1
-  _hitFrequencyGainScore: 1
-  _shakeTimeScore: 1
+  _gameTime: 90
+  _waitTimeAfterRetryPress: 1.5
   _ball: {fileID: 1724967748}
   _ballLaunchDelay: 3
   _ballDefaultColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1711,9 +1703,78 @@ MonoBehaviour:
   _colorPaddle1: {r: 0, g: 0.67058825, b: 1, a: 1}
   _colorPaddle2: {r: 1, g: 0.40784314, b: 0, a: 1}
   _txtTime: {fileID: 1707951058}
+  _txtBallLaunchCountdown: {fileID: 733689383}
+  _onCollisionMainWall: {fileID: 1907658914}
+  _onTriggerBackWall: {fileID: 296344620}
+  _onCollisionRightWall: {fileID: 1110327735}
+  _onCollisionLeftWall: {fileID: 2136516559}
+--- !u!4 &456610407
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456610405}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.2157529, y: -1.6575683, z: -0.12201461}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 18639777}
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &456610408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456610405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d45b72c5d875b46ae2dac5afeb8676, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _vCam: {fileID: 596332690}
+  _hitAmplitudeGainWall: 0.5
+  _hitFrequencyGainWall: 0.5
+  _shakeTimeWall: 0.5
+  _hitAmplitudeGainScore: 1
+  _hitFrequencyGainScore: 1
+  _shakeTimeScore: 1
+--- !u!1 &483265663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 483265665}
+  - component: {fileID: 483265664}
+  - component: {fileID: 483265666}
+  m_Layer: 0
+  m_Name: Controller.MainUi
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &483265664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483265663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b95a5b3d9d9e18448bc17965fbdbc21b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _txtPlayer1Score: {fileID: 1669565583}
   _txtPlayer2Score: {fileID: 2105823462}
-  _txtBallLaunchCountdown: {fileID: 733689383}
   _joinPlayer1: {fileID: 1524209719}
   _joinPlayer2: {fileID: 88670900}
   _animationCurveScored:
@@ -1746,46 +1807,28 @@ MonoBehaviour:
   _groupPlayer2Scored: {fileID: 1354965388}
   _imagePlayer1Scored: {fileID: 1569862078}
   _imagePlayer2Scored: {fileID: 1354965389}
-  _onCollisionMainWall: {fileID: 1907658914}
-  _onTriggerBackWall: {fileID: 296344620}
-  _onCollisionRightWall: {fileID: 1110327735}
-  _onCollisionLeftWall: {fileID: 2136516559}
---- !u!4 &456610407
+--- !u!4 &483265665
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 456610405}
+  m_GameObject: {fileID: 483265663}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2157529, y: -1.6575683, z: -0.12201461}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 18639777}
+  m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &456610408
+--- !u!114 &483265666
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 456610405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45d45b72c5d875b46ae2dac5afeb8676, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _vCam: {fileID: 596332690}
---- !u!114 &456610409
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 456610405}
+  m_GameObject: {fileID: 483265663}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 934fc0412eab7a2408722cd8ee6d718e, type: 3}
@@ -1815,8 +1858,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _openAnimTime: 1.5
   _animator: {fileID: 213823946}
-  _animTime: 1.5
   _groupGameOver: {fileID: 730125789}
   _txtPlayerXWins: {fileID: 755803701}
   _txtPlayer1: {fileID: 1888615217}
@@ -3287,7 +3330,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1133419764
 MonoBehaviour:
@@ -5036,7 +5079,7 @@ Transform:
   - {fileID: 289045270}
   - {fileID: 717849792}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1804342297
 BoxCollider2D:
