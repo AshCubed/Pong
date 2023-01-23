@@ -7,9 +7,15 @@ using UnityEngine.InputSystem;
 
 namespace Pong
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IPause
     {
+        public enum GameMode
+        {
+            NONE, LOCAL, AI
+        }
+
         [Header("Game Settings")] 
+        [SerializeField] private GameMode _gameMode;
         [SerializeField] private float _gameTime;
         [SerializeField] private float _waitTimeAfterRetryPress;
         [Header("Ball")]
@@ -90,19 +96,35 @@ namespace Pong
             _onPlayerScoreChange?.Invoke(null, _scorePlayer1, _scorePlayer2);
             _onGameInit?.Invoke();
         }
+
+        private void StartGame()
+        {
+            if (_paddleP1 && _paddleP2)
+            {
+                LaunchBall(() =>
+                {
+                    PlayerMovement(true);
+                    _isGameRunning = true;
+                    _isTimerRunning = true;
+                });
+            }
+        }
         
         private void Timer()
         {
-            if (_currentGameTime > 0 && _isTimerRunning)
+            if (_isTimerRunning)
             {
-                _currentGameTime -= Time.deltaTime;
-                _txtTime.text = DisplayTime(_currentGameTime);
+                if (_currentGameTime > 0)
+                {
+                    _currentGameTime -= Time.deltaTime;
+                    _txtTime.text = DisplayTime(_currentGameTime);
+                }
+                else
+                {
+                    EndGame();
+                }
             }
-            else
-            {
-                EndGame();
-            }
-
+            
             string DisplayTime(float timeToDisplay)
             {
                 float min = Mathf.FloorToInt(timeToDisplay / 60);
@@ -169,15 +191,7 @@ namespace Pong
                 _onPlayerJoined?.Invoke(_paddleP2, _colorPaddle2);
             }
 
-            if (_paddleP1 && _paddleP2)
-            {
-                LaunchBall(() =>
-                {
-                    PlayerMovement(true);
-                    _isGameRunning = true;
-                    _isTimerRunning = true;
-                });
-            }
+            StartGame();
         }
         
         public void PlayerInputManagerOnonPlayerLeft(PlayerInput obj)
@@ -291,5 +305,43 @@ namespace Pong
             _ball.ResetLastPlayer(_ballDefaultColor);
         }
         #endregion
+
+        public void Pause()
+        {
+            PlayerMovement(false);
+            if (_leanBallReset != null)
+            {
+                LeanTween.cancel(_leanBallReset.uniqueId);
+                _txtBallLaunchCountdown.gameObject.SetActive(false);
+            }
+            
+            if (_isGameRunning)
+            {
+                if (_isTimerRunning)
+                {
+                    _isTimerRunning = false;
+                    ResetBall();
+                }
+            }
+        }
+
+        public void Resume()
+        {
+            if (_isGameRunning)
+            {
+                if (!_isTimerRunning)
+                {
+                    LaunchBall(() =>
+                    {
+                        _isTimerRunning = true;
+                        PlayerMovement(true);
+                    });
+                }
+            }
+            else
+            {
+                StartGame();
+            }
+        }
     }
 }

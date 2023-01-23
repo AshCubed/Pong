@@ -33,10 +33,10 @@ namespace Pong
 
         [Space(4)]
         [SerializeField] private CanvasGroup _settingsCanvas;
-        [SerializeField] private Button _btnMainMenu;
+        /*[SerializeField] private GameObject _mainMenu;
+        [SerializeField] private Button _btnMainMenu;*/
         [SerializeField] private Button _btnExit;
         [SerializeField] private Button _btnContinue;
-        [Tooltip("On a scene by scene basis assign this variable")]
         [SerializeField] private Button _btnPause;
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private Slider _sliderMainV;
@@ -62,46 +62,38 @@ namespace Pong
                 _onGamePause += item.Pause;
                 _onGameResume += item.Resume;
             }
+
+            _settingsCanvas.alpha = 0;
+            _settingsCanvas.gameObject.SetActive(false);
         }
 
         private void Start()
         {
             _isPaused = false;
             _btnExit.onClick.AddListener(ApplicationExit);
-            _btnMainMenu.onClick.AddListener(LoadMainMenu);
+            //_btnMainMenu.onClick.AddListener(LoadMainMenu);
             _btnContinue.onClick.AddListener(() => _onGameResume?.Invoke());
             if (_btnPause != null)
                 _btnPause.onClick.AddListener(() => _onGamePause?.Invoke());
         }
 
-        private void FixedUpdate()
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (!_isPaused)
-                    _onGamePause?.Invoke();
-                else
-                    _onGameResume?.Invoke();
-            }
-        }
-
         private void UiSetUp()
         {
             //Game Quality
-            string[] qualityNames = QualitySettings.names;
+            var qualityNames = QualitySettings.names;
             _qualityDropdown.ClearOptions();
-            List<string> qualityOptions = new List<string>();
-            int currentQialityIndex = 0;
-            for (int i = 0; i < qualityNames.Length; i++)
+            var qualityOptions = new List<string>();
+            var currentQualityIndex = 0;
+            for (var i = 0; i < qualityNames.Length; i++)
             {
-                string option = qualityNames[i];
+                var option = qualityNames[i];
                 qualityOptions.Add(option);
 
                 if (QualitySettings.GetQualityLevel() == i)
-                    currentQialityIndex = i;
+                    currentQualityIndex = i;
             }
             _qualityDropdown.AddOptions(qualityOptions);
-            _qualityDropdown.value = currentQialityIndex;
+            _qualityDropdown.value = currentQualityIndex;
             _qualityDropdown.RefreshShownValue();
             _qualityDropdown.onValueChanged.AddListener(delegate { SetQuality(_qualityDropdown.value); });
             //All volume controls
@@ -133,17 +125,17 @@ namespace Pong
         {
             _isPaused = false;
             UpdatePlayerPrefsSettingsValues();
-            LTDescr fadeTween = LeanTween.alphaCanvas(_settingsCanvas, 0, 0.5f).setOnComplete(() => { _settingsCanvas.gameObject.SetActive(false); });
+            var fadeTween = LeanTween.alphaCanvas(_settingsCanvas, 0, 0.5f).setOnComplete(() => { _settingsCanvas.gameObject.SetActive(false); });
             return fadeTween;
         }
 
-        void LoadMainMenu()
+        private void LoadMainMenu()
         {
             _isPaused = false;
-            LeanTween.delayedCall(CloseSettingsMenu().delay, () => SceneManager.LoadScene(Constants.SceneTags.MAIN_MENU));
-            //CloseSettingsMenu();
-
-            //fadeCamera.FadeOut(2f, () => SceneManager.LoadScene("Main Menu"));
+            LeanTween.delayedCall(CloseSettingsMenu().delay, () =>
+            {
+                //_mainMenu.gameObject.SetActive(true);
+            });
         }
 
         public void ApplicationExit()
@@ -240,9 +232,9 @@ namespace Pong
             _sliderSfxV.value = Constants.PlayerPrefsKeys.GetPlayerPrefVolumeSfx();
             SetSfxMainVolume(_sliderSfxV.value);
             _sliderMusicV.value = Constants.PlayerPrefsKeys.GetPlayerPrefVolumeMusic();
-            SetMainVolume(_sliderMusicV.value);
+            SetMusicVolume(_sliderMusicV.value);
             _sliderUiV.value = Constants.PlayerPrefsKeys.GetPlayerPrefVolumeUi();
-            SetMainVolume(_sliderUiV.value);
+            SetUiMainVolume(_sliderUiV.value);
         }
         #endregion
     }
