@@ -3119,7 +3119,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e8bde489b03ac54488282c08e21f357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameMode: 0
   _gameTime: 90
   _waitTimeAfterRetryPress: 1.5
   _ball: {fileID: 1724967748}
@@ -7727,6 +7726,8 @@ MonoBehaviour:
       remapped: 15
     - original: 18
       remapped: 18
+    - original: 60
+      remapped: 60
   - name: Right
     routes:
     - original: 37
@@ -7737,6 +7738,8 @@ MonoBehaviour:
       remapped: 61
     - original: 18
       remapped: 62
+    - original: 60
+      remapped: 60
 --- !u!1 &1140468022
 GameObject:
   m_ObjectHideFlags: 0
@@ -14642,6 +14645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 412639d49808c274dae52495505c8124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inputActionReferencePause: {fileID: -475146945816093482, guid: 1e07e11bc449ad347bbb9dd357f04024, type: 3}
   _settingsCanvas: {fileID: 714974247}
   _btnExit: {fileID: 1773089498}
   _btnContinue: {fileID: 1679284664}

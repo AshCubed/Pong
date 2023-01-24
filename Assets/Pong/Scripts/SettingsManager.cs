@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 namespace Pong
 {
@@ -17,24 +18,9 @@ namespace Pong
 
     public class SettingsManager : MonoBehaviour, IPause
     {
-        private static SettingsManager _instance;
-
-        public static SettingsManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindObjectOfType<SettingsManager>();
-                }
-                return _instance;
-            }
-        }
-
-        [Space(4)]
+        [Space(4)] 
+        [SerializeField] private InputActionReference _inputActionReferencePause;
         [SerializeField] private CanvasGroup _settingsCanvas;
-        /*[SerializeField] private GameObject _mainMenu;
-        [SerializeField] private Button _btnMainMenu;*/
         [SerializeField] private Button _btnExit;
         [SerializeField] private Button _btnContinue;
         [SerializeField] private Button _btnPause;
@@ -75,6 +61,14 @@ namespace Pong
             _btnContinue.onClick.AddListener(() => _onGameResume?.Invoke());
             if (_btnPause != null)
                 _btnPause.onClick.AddListener(() => _onGamePause?.Invoke());
+        }
+        
+        private void PauseActionPerformed(InputAction.CallbackContext obj)
+        {
+            if (!_isPaused)
+                _onGamePause?.Invoke();
+            else
+                _onGameResume?.Invoke();
         }
 
         private void UiSetUp()
@@ -148,11 +142,13 @@ namespace Pong
 
         private void OnEnable()
         {
+            _inputActionReferencePause.action.performed += PauseActionPerformed;
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
         }
         private void OnDestroy()
         {
+            _inputActionReferencePause.action.performed -= PauseActionPerformed;
             SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
             SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
         }

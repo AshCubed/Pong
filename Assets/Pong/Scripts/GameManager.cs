@@ -9,13 +9,7 @@ namespace Pong
 {
     public class GameManager : MonoBehaviour, IPause
     {
-        public enum GameMode
-        {
-            NONE, LOCAL, AI
-        }
-
         [Header("Game Settings")] 
-        [SerializeField] private GameMode _gameMode;
         [SerializeField] private float _gameTime;
         [SerializeField] private float _waitTimeAfterRetryPress;
         [Header("Ball")]
@@ -165,10 +159,24 @@ namespace Pong
 
         private void PlayerMovement(bool canMove)
         {
-            _paddleP1.CanMove = canMove;
-            _paddleP2.CanMove = canMove;
-            _paddleP1.HasCollision = canMove;
-            _paddleP2.HasCollision = canMove;
+            if (_paddleP1)
+            {
+                _paddleP1.CanMove = canMove;
+                _paddleP1.HasCollision = canMove;
+            }
+            else
+            {
+                Debug.Log($"{GetType().Name}::MISSING PADDLE 1::");
+            }
+            if (_paddleP2)
+            {
+                _paddleP2.CanMove = canMove;
+                _paddleP2.HasCollision = canMove;
+            }
+            else
+            {
+                Debug.Log($"{GetType().Name}::MISSING PADDLE 2::");
+            }
         }
 
         #region Player Input Joined Events Calls
@@ -306,6 +314,7 @@ namespace Pong
         }
         #endregion
 
+        #region IPause
         public void Pause()
         {
             PlayerMovement(false);
@@ -343,5 +352,6 @@ namespace Pong
                 StartGame();
             }
         }
+        #endregion
     }
 }
