@@ -52,6 +52,7 @@ namespace Pong
         // Start is called before the first frame update
         private void Start()
         {
+            //Find all MonoBehaviours which use the IGameManager interface and add them to the relevant actions.
             foreach (var item in FindObjectsOfType<MonoBehaviour>(true).OfType<IGameManager>())
             {
                 _onGameInit += item.OnInit;
@@ -159,23 +160,16 @@ namespace Pong
 
         private void PlayerMovement(bool canMove)
         {
-            if (_paddleP1)
+            if (_paddleP1 && _paddleP2)
             {
                 _paddleP1.CanMove = canMove;
                 _paddleP1.HasCollision = canMove;
-            }
-            else
-            {
-                Debug.Log($"{GetType().Name}::MISSING PADDLE 1::");
-            }
-            if (_paddleP2)
-            {
                 _paddleP2.CanMove = canMove;
                 _paddleP2.HasCollision = canMove;
             }
             else
             {
-                Debug.Log($"{GetType().Name}::MISSING PADDLE 2::");
+                Debug.Log($"{GetType().Name}::MISSING PADDLE 1 or PADDLE 2::");
             }
         }
 

@@ -6,12 +6,6 @@ namespace Pong
 {
     public static class Constants
     {
-        public static class SceneTags
-        {
-            public const string MAIN_MENU = "Main Menu";
-            public const string MAIN_LEVEL = "MainScene";
-        }
-
         public static class Tags
         {
             public const string PLAYER = "Player";
