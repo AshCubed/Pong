@@ -3,6 +3,8 @@ A techincal test created for [Studio Bolland](https://www.studiobolland.com).
 
 Pong with a twist, with mechanics designed around Squash. Be the last person to hit the ball against the top most ball, if the color of the ball is your color when it exits the field then you score a point.
 
+Please feel free to try out the game here - https://ashcubed.itch.io/pong-squash-edition
+
 ![Pong_a4V7ELGDBX](https://user-images.githubusercontent.com/43545267/214413154-34714bf2-376f-47e6-92ba-2e1f92c83f90.png)
 
 
