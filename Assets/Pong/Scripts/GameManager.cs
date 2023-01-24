@@ -47,6 +47,7 @@ namespace Pong
         private Paddle _currentScorer;
         private bool _isGameRunning;
         private bool _isTimerRunning;
+        private bool _isGamePaused;
         private LTDescr _leanBallReset;
         
         // Start is called before the first frame update
@@ -193,7 +194,10 @@ namespace Pong
                 _onPlayerJoined?.Invoke(_paddleP2, _colorPaddle2);
             }
 
-            StartGame();
+            if (!_isGamePaused)
+            {
+                StartGame();
+            }
         }
         
         public void PlayerInputManagerOnonPlayerLeft(PlayerInput obj)
@@ -311,6 +315,7 @@ namespace Pong
         #region IPause
         public void Pause()
         {
+            _isGamePaused = true;
             PlayerMovement(false);
             if (_leanBallReset != null)
             {
@@ -330,6 +335,7 @@ namespace Pong
 
         public void Resume()
         {
+            _isGamePaused = false;
             if (_isGameRunning)
             {
                 if (!_isTimerRunning)

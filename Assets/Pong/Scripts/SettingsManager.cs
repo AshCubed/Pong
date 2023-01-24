@@ -20,6 +20,8 @@ namespace Pong
     {
         [SerializeField] private InputActionReference _inputActionReferencePause;
         [SerializeField] private CanvasGroup _settingsCanvas;
+        [Tooltip("Add any UI that must be inactive for users to be able to pause/unpause the game")]
+        [SerializeField] private GameObject[] _objectsCheck;
         [Header("Buttons")]
         [SerializeField] private Button _btnExit;
         [SerializeField] private Button _btnContinue;
@@ -31,15 +33,15 @@ namespace Pong
         [SerializeField] private Slider _sliderSfxV;
         [SerializeField] private Slider _sliderUiV;
         [SerializeField] private Slider _sliderMusicV;
+        
         private bool _isPaused;
-
         private Action _onGamePause;
         private Action _onGameResume;
 
         private void Awake()
         {
+            LoadPlayerPrefsSettingsValues();
             UiSetUp();
-
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
 
@@ -56,6 +58,7 @@ namespace Pong
 
         private void Start()
         {
+            CloseActiveObjects();
             _isPaused = false;
             _btnExit.onClick.AddListener(ApplicationExit);
             _btnContinue.onClick.AddListener(() => _onGameResume?.Invoke());
@@ -79,6 +82,17 @@ namespace Pong
             _sliderSfxV.onValueChanged.AddListener(delegate { SetSfxMainVolume(_sliderSfxV.value); });
             _sliderMusicV.onValueChanged.AddListener(delegate { SetMusicVolume(_sliderMusicV.value); });
             _sliderUiV.onValueChanged.AddListener(delegate { SetUiMainVolume(_sliderUiV.value); });
+        }
+
+        private void CloseActiveObjects()
+        {
+            foreach (var item in _objectsCheck)
+            {
+                if (item.activeSelf)
+                {
+                    item.SetActive(false);
+                }
+            }
         }
         
         private LTDescr OpenSettingsMenu()
@@ -107,6 +121,7 @@ namespace Pong
         
         private void PauseActionPerformed(InputAction.CallbackContext obj)
         {
+            CloseActiveObjects();
             if (!_isPaused)
                 _onGamePause?.Invoke();
             else
