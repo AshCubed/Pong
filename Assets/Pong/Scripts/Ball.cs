@@ -13,6 +13,7 @@ namespace Pong
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private ParticleSystem _hitParticleSystem;
         [SerializeField] private LayerMask _layerWall;
+        [Tooltip("Add every wall and AngleZ at which particles must be spawned when the ball hits them")]
         [SerializeField] private WallAngleHit[] _wallAngleHits;
 
         [Serializable]
@@ -23,6 +24,9 @@ namespace Pong
             public bool ShouldCopyColor;
         }
         
+        /// <summary>
+        /// Sets sprite renderer and trail renderer colors of this ball
+        /// </summary>
         public Color BallColor
         {
             set
@@ -32,6 +36,10 @@ namespace Pong
                 _trailRenderer.endColor = value;
             }
         }
+        
+        /// <summary>
+        /// The last player this ball hit
+        /// </summary>
         public Paddle LastPlayerToHit { get; private set; }
 
         // Start is called before the first frame update

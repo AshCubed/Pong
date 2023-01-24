@@ -2,7 +2,7 @@ using System;
 using Cinemachine;
 using UnityEngine;
 
-namespace Pong
+namespace Pong.Managers
 {
     public enum BallHit
     {
@@ -25,6 +25,12 @@ namespace Pong
             _noisePerlin = _vCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         }
 
+        /// <summary>
+        /// Shakes the camera (<see cref="_vCam"/>) using passed values for a period of time
+        /// </summary>
+        /// <param name="hitAmplitudeGain">Noise Amplitude to use</param>
+        /// <param name="hitFrequencyGain">Noise Frequency to use</param>
+        /// <param name="shakeTime">Total time the camera will shake</param>
         private void Shake(float hitAmplitudeGain, float hitFrequencyGain, float shakeTime)
         {
             _shakeTime = shakeTime;
@@ -34,6 +40,9 @@ namespace Pong
             _isShaking = true;
         }
 
+        /// <summary>
+        /// Stops camera shake
+        /// </summary>
         private void StopShake()
         {
             _isShaking = false;

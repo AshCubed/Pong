@@ -31,7 +31,7 @@ namespace Pong.Audio
             DontDestroyOnLoad(gameObject);
 
             //Creates audio sources for every sound in the list
-            foreach (Sound s in _sounds)
+            foreach (var s in _sounds)
             {
                 s.Source = gameObject.AddComponent<AudioSource>();
                 s.Source.clip = s.Clip;
@@ -56,67 +56,65 @@ namespace Pong.Audio
             PlaySounds("BackgroundMusic");
         }
 
+        /// <summary>
+        /// Play an audio source with the requested sound name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
         public void PlaySounds(string audioName)
+        {
+            var s = Array.Find(_sounds, sound => sound.Name == audioName);
+
+            if (s == null) return;
+
+            if (!s.Source.isPlaying)
+                s.Source.Play();
+        }
+
+        /// <summary>
+        /// Play an audio source, one shot, with the requested sound name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
+        public void PlayOneShot(string audioName)
+        {
+            var foundSound = Array.Find(_sounds, sound => sound.Name == audioName);
+            foundSound?.Source.PlayOneShot(foundSound.Clip);
+        }
+
+        /// <summary>
+        /// Adjust the sound of the given named audio source name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
+        /// <param name="volume">Required level of volume</param>
+        public void ChangeVolume(string audioName, float volume)
         {
             var s = Array.Find(_sounds, sound => sound.Name == audioName);
 
             if (s == null)
             {
-                //Debug.Log("Sound: " + name + " not found!");
-                return;
-            }
-
-            if (!s.Source.isPlaying)
-            {
-                //Debug.Log("Sound: " + name + " Playing!");
-                s.Source.Play();
-            }
-        }
-
-        public void PlayOneShot(string audioName)
-        {
-            Sound s = Array.Find(_sounds, sound => sound.Name == audioName);
-
-            if (s == null)
-            {
-                //Debug.Log("Sound: " + name + " not found!");
-                return;
-            }
-
-            s.Source.PlayOneShot(s.Clip);
-        }
-
-        public void ChangeVolume(string audioName, float volume)
-        {
-            Sound s = Array.Find(_sounds, sound => sound.Name == audioName);
-
-            if (s == null)
-            {
-                //Debug.Log("Sound: " + name + " not found!");
                 return;
             }
 
             if (s.Source.volume != volume)
             {
-                //Debug.Log("Sound: " + name + " Volume Adujusted to " + amnt);
                 s.Source.volume = volume;
             }
         }
 
+        /// <summary>
+        /// Stops an audio source with the requested sound name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
         public void StopSounds(string audioName)
         {
             var s = Array.Find(_sounds, sound => sound.Name == audioName);
-            if (s == null)
-            {
-                // Debug.Log("Sound: " + name + " not found!");
-                return;
-            }
+            if (s == null) return;
             if (s.Source.isPlaying)
-            {
                 s.Source.Stop();
-            }
         }
 
+        /// <summary>
+        /// Stops all audio sources
+        /// </summary>
         public void StopAll()
         {
             foreach (var s in _sounds)
@@ -125,10 +123,15 @@ namespace Pong.Audio
             }
         }
 
+        /// <summary>
+        /// Fades out an audio source with the requested sound name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
+        /// <param name="onComplete">Method group which will be called when fade out is complete</param>
         public void FadeOutAudio(string audioName, Action onComplete)
         {
-            Sound sound = GetSound(audioName);
-            float v = sound.Source.volume;
+            var sound = GetSound(audioName);
+            var v = sound.Source.volume;
             LeanTween.value(v, 0, 1f).setOnUpdate((float x) => {
                 sound.Source.volume = x;
             }).setOnComplete(() => {
@@ -138,9 +141,14 @@ namespace Pong.Audio
             });
         }
 
-        public Sound GetSound(string audioName)
+        /// <summary>
+        /// Attempts to find a sound object with the requested sound name
+        /// </summary>
+        /// <param name="audioName">Name of the audio which the user detailed in the Sounds array</param>
+        /// <returns>Sound object to be used</returns>
+        private Sound GetSound(string audioName)
         {
-            Sound s = Array.Find(_sounds, sound => sound.Name == audioName);
+            var s = Array.Find(_sounds, sound => sound.Name == audioName);
             return s;
         }
     }

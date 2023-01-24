@@ -8,11 +8,17 @@ using System;
 using System.Linq;
 using UnityEngine.InputSystem;
 
-namespace Pong
+namespace Pong.Managers
 {
     public interface IPause
     {
+        /// <summary>
+        /// Subscribes to an event in Settings Manager, this is called whenever the game is paused
+        /// </summary>
         public void Pause();
+        /// <summary>
+        /// Subscribes to an event in Settings Manager, this is called whenever the game is resumed
+        /// </summary>
         public void Resume();
     }
 
@@ -66,6 +72,9 @@ namespace Pong
                 _btnPause.onClick.AddListener(() => _onGamePause?.Invoke());
         }
 
+        /// <summary>
+        /// Initializes all UI
+        /// </summary>
         private void UiSetUp()
         {
             _sliderMainV.minValue = _volumeMin;
@@ -84,6 +93,9 @@ namespace Pong
             _sliderUiV.onValueChanged.AddListener(delegate { SetUiMainVolume(_sliderUiV.value); });
         }
 
+        /// <summary>
+        /// Closes all active objects in <see cref="_objectsCheck"/>
+        /// </summary>
         private void CloseActiveObjects()
         {
             foreach (var item in _objectsCheck)
@@ -119,6 +131,10 @@ namespace Pong
             Application.Quit();
         }
         
+        /// <summary>
+        /// If the user has pressed a physical pause button
+        /// </summary>
+        /// <param name="obj"></param>
         private void PauseActionPerformed(InputAction.CallbackContext obj)
         {
             CloseActiveObjects();

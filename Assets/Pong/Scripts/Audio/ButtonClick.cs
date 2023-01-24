@@ -7,6 +7,9 @@ namespace Pong.Audio
     {
         [SerializeField] private AudioManager _audioManager;
 
+        /// <summary>
+        /// Adds <see cref="PlayButtonClick"/> method to every button in the scene>
+        /// </summary>
         private void SetUpButtons()
         {
             LeanTween.delayedCall(0.5f, () =>
@@ -22,6 +25,9 @@ namespace Pong.Audio
             });
         }
 
+        /// <summary>
+        /// Plays one shot a button click sound from the Audio Manager
+        /// </summary>
         private void PlayButtonClick()
         {
             _audioManager.PlayOneShot("ButtonClick");

@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
 using Pong.Audio;
+using Pong.Helpers;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 
-namespace Pong
+namespace Pong.Managers
 {
     public class GameManager : MonoBehaviour, IPause
     {
@@ -82,6 +83,9 @@ namespace Pong
             }
         }
 
+        /// <summary>
+        /// Initializes the game with default values, also calls <see cref="_onGameInit"/> action
+        /// </summary>
         private void InitGame()
         {
             _currentGameTime = _gameTime;
@@ -93,6 +97,9 @@ namespace Pong
             _onGameInit?.Invoke();
         }
 
+        /// <summary>
+        /// If both paddles are assigned <see cref="LaunchBall"/> is called
+        /// </summary>
         private void StartGame()
         {
             if (_paddleP1 && _paddleP2)
@@ -106,6 +113,10 @@ namespace Pong
             }
         }
         
+        /// <summary>
+        /// Controls the timer of the game, displaying the timer in UI, and ending the game after the timer
+        /// has expired
+        /// </summary>
         private void Timer()
         {
             if (_isTimerRunning)
@@ -129,6 +140,9 @@ namespace Pong
             }
         }
 
+        /// <summary>
+        /// Ends the game, also calls <see cref="_onGameEnd"/> action
+        /// </summary>
         private void EndGame()
         {
             _isTimerRunning = false;
@@ -142,6 +156,9 @@ namespace Pong
                 _scorePlayer1, _scorePlayer2);
         }
 
+        /// <summary>
+        /// Called on a button on the Game Over Screen to reset the game, also calls <see cref="_onGameRetry"/> action
+        /// </summary>
         public void Retry()
         {
             AudioManager.Instance.PlaySounds("BackgroundMusic");
@@ -159,6 +176,10 @@ namespace Pong
             });
         }
 
+        /// <summary>
+        /// If both paddles are assigned, then controls if each paddle can move
+        /// </summary>
+        /// <param name="canMove">Defines if that can move</param>
         private void PlayerMovement(bool canMove)
         {
             if (_paddleP1 && _paddleP2)
@@ -175,6 +196,10 @@ namespace Pong
         }
 
         #region Player Input Joined Events Calls
+        /// <summary>
+        /// Called on the Player Input Manager event when player joins
+        /// </summary>
+        /// <param name="obj"></param>
         public void PlayerInputManagerOnonPlayerJoined(PlayerInput obj)
         {
             if (!_paddleP1)
@@ -200,6 +225,10 @@ namespace Pong
             }
         }
         
+        /// <summary>
+        /// Called on the Player Input Manager event when player leaves
+        /// </summary>
+        /// <param name="obj"></param>
         public void PlayerInputManagerOnonPlayerLeft(PlayerInput obj)
         {
             _isGameRunning = false;
@@ -276,6 +305,11 @@ namespace Pong
             }
         }
 
+        /// <summary>
+        /// Launches the ball in the game from a predetermined point.
+        /// </summary>
+        /// <param name="afterBallLaunch">Method group which is called after the ball is launched</param>
+        /// <param name="foregoCountdown">Set true if you wish to not use a countdown before launch</param>
         private void LaunchBall(Action afterBallLaunch = null, bool foregoCountdown = false)
         {
             if (foregoCountdown)
@@ -303,6 +337,9 @@ namespace Pong
             }
         }
 
+        /// <summary>
+        /// Stops ball movement
+        /// </summary>
         private void ResetBall()
         {
             if (_leanBallReset != null)

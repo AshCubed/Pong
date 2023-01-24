@@ -1,19 +1,18 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Pong
+namespace Pong.Helpers
 {
     [RequireComponent(typeof(Collider2D))]
     public class OnCollision : MonoBehaviour
     {
-
         [SerializeField]public UnityEvent<Collision2D> OnCollisionEnterEvent;
         [SerializeField]public UnityEvent<Collision2D> OnCollisionStayEvent;
         [SerializeField]public UnityEvent<Collision2D> OnCollisionExitEvent;
         
         public UnityEvent<Collision2D, OnContactType> OnCollisionEvent { get; private set; }
 
-        public Collider2D Collider
+        private Collider2D Collider
         {
             get
             {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Pong
+namespace Pong.Helpers
 {
     public enum OnContactType {ENTER, STAY, EXIT };
     
@@ -14,7 +14,7 @@ namespace Pong
         
         public UnityEvent<Collider2D, OnContactType> OnTriggerEvent { get; private set; }
 
-        public Collider2D Collider
+        private Collider2D Collider
         {
             get
             {

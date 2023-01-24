@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Pong
+namespace Pong.Managers
 {
     public class GameOverScreen : MonoBehaviour, IGameManager
     {
@@ -24,6 +24,10 @@ namespace Pong
             InitScreen(0f);
         }
         
+        /// <summary>
+        /// Initializes Game over screen with default values, also closes the screen.
+        /// </summary>
+        /// <param name="animTime"></param>
         private void InitScreen(float animTime)
         {
             var groupGameObject = _groupGameOver.gameObject;
@@ -40,6 +44,13 @@ namespace Pong
                 });
         }
         
+        /// <summary>
+        /// Opens Game Over screen
+        /// </summary>
+        /// <param name="colorP1">Player 1 color</param>
+        /// <param name="colorP2">Player 2 color</param>
+        /// <param name="scoreP1">Player 1 score</param>
+        /// <param name="scoreP2">Player 2 score</param>
         private void PlayAnimation(Color colorP1, Color colorP2, int scoreP1, int scoreP2)
         {
             SetText(colorP1, colorP2, scoreP1, scoreP2);
@@ -53,6 +64,13 @@ namespace Pong
                 });
         }
 
+        /// <summary>
+        /// Sets Game over Ui text
+        /// </summary>
+        /// <param name="colorP1">Player 1 color</param>
+        /// <param name="colorP2">Player 2 color</param>
+        /// <param name="scoreP1">Player 1 score</param>
+        /// <param name="scoreP2">Player 2 score</param>
         private void SetText(Color colorP1, Color colorP2, int scoreP1, int scoreP2)
         {
             if (scoreP1 > scoreP2)

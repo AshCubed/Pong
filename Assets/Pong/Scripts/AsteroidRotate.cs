@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,6 +6,7 @@ namespace Pong
     [RequireComponent(typeof(Rigidbody2D))]
     public class AsteroidRotate : MonoBehaviour
     {
+        [Tooltip("Check true if you want the spawned items to be given random forces to keep them moving")]
         [SerializeField] private bool _shouldRandomForceInGame;
         [SerializeField] private float _waitTime = 10f;
         [SerializeField] private int _force = 10;
@@ -34,6 +32,9 @@ namespace Pong
             _currentTime = 0f;
         }
 
+        /// <summary>
+        /// Adds a random Force and Torque to this rigidbody using <see cref="_force"/>
+        /// </summary>
         private void ProduceRandomForceAndTorque()
         {
             var num = Random.Range(0, 2);

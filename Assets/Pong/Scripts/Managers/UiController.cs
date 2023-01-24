@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Pong
+namespace Pong.Managers
 {
     public class UiController : MonoBehaviour, IGameManager
     {
@@ -33,6 +33,10 @@ namespace Pong
             OnInit();
         }
 
+        /// <summary>
+        /// Animates a "Player X has scored" ui element
+        /// </summary>
+        /// <param name="canvasGroup">Canvas group of the player who scored</param>
         private void AnimationScore(CanvasGroup canvasGroup)
         {
             var groupGameObject = canvasGroup.gameObject;

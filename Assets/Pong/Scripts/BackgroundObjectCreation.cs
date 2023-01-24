@@ -6,8 +6,11 @@ namespace Pong
 {
     public class BackgroundObjectCreation : MonoBehaviour
     {
+        [Tooltip("Collider area where items can spawn")]
         [SerializeField] private BoxCollider2D _colliderArea;
+        [Tooltip("Maximum number of objects that can be spawned")]
         [SerializeField] private int _totalObjectsToSpawn;
+        [Tooltip("All items which can be spawned")]
         [SerializeField] private List<GameObject> _asteroidsToSpawn;
         
         private List<GameObject> _objectsSpawned;
@@ -32,6 +35,9 @@ namespace Pong
             SpawnObjects();
         }
 
+        /// <summary>
+        /// Spawns all objects randomly based on settings in this script
+        /// </summary>
         private void SpawnObjects()
         {
             if (_objectsSpawned is { Count: > 0 })
@@ -54,6 +60,10 @@ namespace Pong
             StartCoroutine(RevealObjects());
         }
 
+        /// <summary>
+        /// Runs through <see cref="_objectsSpawned"/> and sets each active after 1 second
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator RevealObjects()
         {
             foreach (var item in _objectsSpawned)
@@ -69,7 +79,7 @@ namespace Pong
         /// <returns>Random position</returns>
         private Vector2 GetRandomPosition()
         {
-            Vector2 randomPosition = new Vector2(
+            var randomPosition = new Vector2(
                 Random.Range(-_cubeSize.x / 2, _cubeSize.x / 2), 
                 Random.Range(-_cubeSize.y / 2, _cubeSize.y / 2));
             return _cubeCenter + randomPosition;
